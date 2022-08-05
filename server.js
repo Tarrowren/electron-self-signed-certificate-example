@@ -1,12 +1,11 @@
-import { createReadStream } from "fs";
-import { readFile } from "fs/promises";
-import { createServer } from "https";
+const { readFileSync, createReadStream } = require("fs");
+const { createServer } = require("https");
 
 const server = createServer(
   {
-    ca: await readFile("cert/ca.crt"),
-    cert: await readFile("cert/server.crt"),
-    key: await readFile("cert/server.key"),
+    ca: readFileSync("cert/ca.crt"),
+    cert: readFileSync("cert/server.crt"),
+    key: readFileSync("cert/server.key"),
     requestCert: true,
     rejectUnauthorized: true,
   },
