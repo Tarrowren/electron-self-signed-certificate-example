@@ -1,0 +1,29 @@
+{
+  "name": "electron-self-signed-certificate-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "client": "electron .",
+    "server": "node server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tarrowren/electron-self-signed-certificate-example.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tarrowren/electron-self-signed-certificate-example/issues"
+  },
+  "homepage": "https://github.com/Tarrowren/electron-self-signed-certificate-example#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.47",
+    "electron": "^20.0.1"
+  },
+  "dependencies": {
+    "buffer-readable": "^1.0.2",
+    "multi-readable": "^1.0.0"
+  }
+}
