@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "client": "electron .",
-    "server": "node server.js"
+    "server": "node server.mjs"
   },
   "repository": {
     "type": "git",
@@ -19,11 +19,10 @@
   },
   "homepage": "https://github.com/Tarrowren/electron-self-signed-certificate-example#readme",
   "devDependencies": {
-    "@types/node": "^16.11.47",
-    "electron": "^20.0.1"
+    "@types/node": "^20.3.0",
+    "electron": "^25.1.0"
   },
   "dependencies": {
-    "buffer-readable": "^1.0.2",
-    "multi-readable": "^1.0.0"
+    "undici": "^5.22.1"
   }
 }

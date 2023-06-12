@@ -1,10 +1,7 @@
-const { BufferReadable } = require("buffer-readable");
 const { app, BrowserWindow, protocol } = require("electron");
-const { createReadStream } = require("fs");
-const { readFile } = require("fs/promises");
-const { Agent, request: _request } = require("https");
-const { MultiBufferReadable } = require("multi-readable");
-const { join } = require("path");
+const { readFile } = require("node:fs/promises");
+const { join } = require("node:path");
+const { Agent, fetch } = require("undici");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -25,55 +22,26 @@ app.whenReady().then(async () => {
     readFile("cert/client.crt"),
     readFile("cert/client.key"),
   ]);
-  const agent = new Agent({ ca, cert, key });
+  const agent = new Agent({ connect: { ca, cert, key } });
 
-  protocol.interceptStreamProtocol("https", (request, callback) => {
+  protocol.handle("https", (request) => {
     const url = new URL(request.url);
 
-    const req = _request(
-      {
-        hostname: url.hostname,
-        port: url.port,
-        path: url.pathname + url.search + url.hash,
-        method: request.method,
-        headers: request.headers,
-        agent: url.hostname === "127.0.0.1" ? agent : false,
-        timeout: 10000,
-      },
-      (res) => {
-        callback({
-          data: res,
-          headers: res.headers,
-          method: request.method,
-          referrer: request.referrer,
-          statusCode: res.statusCode,
-        });
-      }
-    )
-      .on("error", (err) => {
-        throw err;
-      })
-      .on("timeout", () => {
-        req.destroy(new Error("timeout"));
-      });
-
-    const uploadData = request.uploadData;
-    if (uploadData && uploadData.length > 0) {
-      new MultiBufferReadable(
-        uploadData.map(({ bytes, blobUUID, file }) => {
-          if (file) {
-            return createReadStream(file);
-          } else if (blobUUID) {
-            // what is it?
-            throw new Error("todo");
-          } else {
-            return new BufferReadable(bytes);
-          }
-        })
-      ).pipe(req);
-    } else {
-      req.end();
-    }
+    return fetch(url, {
+      body: request.body,
+      credentials: request.credentials,
+      duplex: "half",
+      headers: request.headers,
+      integrity: request.integrity,
+      keepalive: request.keepalive,
+      method: request.method,
+      mode: request.mode,
+      redirect: request.redirect,
+      referrer: request.referrer,
+      referrerPolicy: request.referrerPolicy,
+      signal: request.signal,
+      dispatcher: url.hostname === "127.0.0.1" ? agent : undefined,
+    });
   });
 
   createWindow();
