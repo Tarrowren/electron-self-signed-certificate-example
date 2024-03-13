@@ -1,3 +1,5 @@
+// @ts-check
+
 import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:https";
@@ -23,5 +25,5 @@ createServer(
     } else {
       res.statusCode = 404;
     }
-  }
+  },
 ).listen(8080);

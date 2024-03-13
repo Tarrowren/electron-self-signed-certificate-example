@@ -2,10 +2,11 @@
   "name": "electron-self-signed-certificate-example",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "main.js",
   "scripts": {
     "client": "electron .",
-    "server": "node server.mjs"
+    "server": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -19,10 +20,10 @@
   },
   "homepage": "https://github.com/Tarrowren/electron-self-signed-certificate-example#readme",
   "devDependencies": {
-    "@types/node": "^20.3.0",
-    "electron": "^25.1.0"
+    "@types/node": "^20.11.26",
+    "electron": "^29.1.1"
   },
   "dependencies": {
-    "undici": "^5.22.1"
+    "undici": "^6.7.1"
   }
 }

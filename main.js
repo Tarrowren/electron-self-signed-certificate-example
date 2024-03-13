@@ -1,14 +1,16 @@
-const { app, BrowserWindow, protocol } = require("electron");
-const { readFile } = require("node:fs/promises");
-const { join } = require("node:path");
-const { Agent, fetch } = require("undici");
+// @ts-check
+
+import { app, BrowserWindow, protocol } from "electron";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { Agent } from "undici";
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: join(__dirname, "preload.js"),
+      preload: resolve("preload.js"),
     },
   });
 
@@ -16,30 +18,24 @@ function createWindow() {
   // win.loadURL("https://developer.mozilla.org");
 }
 
-app.whenReady().then(async () => {
-  const [ca, cert, key] = await Promise.all([
-    readFile("cert/ca.crt"),
-    readFile("cert/client.crt"),
-    readFile("cert/client.key"),
-  ]);
-  const agent = new Agent({ connect: { ca, cert, key } });
+Promise.all([
+  app.whenReady(),
+  readFile("cert/ca.crt"),
+  readFile("cert/client.crt"),
+  readFile("cert/client.key"),
+]).then(([_, ca, cert, key]) => {
+  const agent = new Agent({
+    connect: {
+      ca,
+      cert,
+      key,
+    },
+  });
 
   protocol.handle("https", (request) => {
     const url = new URL(request.url);
 
-    return fetch(url, {
-      body: request.body,
-      credentials: request.credentials,
-      duplex: "half",
-      headers: request.headers,
-      integrity: request.integrity,
-      keepalive: request.keepalive,
-      method: request.method,
-      mode: request.mode,
-      redirect: request.redirect,
-      referrer: request.referrer,
-      referrerPolicy: request.referrerPolicy,
-      signal: request.signal,
+    return fetch(request, {
       dispatcher: url.hostname === "127.0.0.1" ? agent : undefined,
     });
   });

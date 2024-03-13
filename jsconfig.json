@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "types": ["node"],
+  },
+  "include": ["main.js"],
+}
